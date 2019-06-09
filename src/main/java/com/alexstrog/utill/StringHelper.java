@@ -1,8 +1,12 @@
 package com.alexstrog.utill;
 
+import org.apache.log4j.Logger;
+
 import java.lang.reflect.Field;
 
 public class StringHelper {
+
+    private static final Logger logger = Logger.getLogger(StringHelper.class);
 
     public static String toSnakeCase(String camelCaseString) {
         String regex = "([a-z])([A-Z]+)";
@@ -24,7 +28,7 @@ public class StringHelper {
                 value = '\'' + field.get(object).toString() + '\'';
             }
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            logger.error("Can't get entity's value", e);
         }
         return value;
     }

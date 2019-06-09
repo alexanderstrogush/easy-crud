@@ -3,6 +3,7 @@ package com.alexstrog.dao.implementation;
 import com.alexstrog.dao.ConnectionUtil;
 import com.alexstrog.dao.GenericDao;
 import com.alexstrog.utill.StringHelper;
+import org.apache.log4j.Logger;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class AbstractDao<T, ID> implements GenericDao<T, ID> {
+
+    private final Logger logger = Logger.getLogger(AbstractDao.class);
 
     private Class<T> entityClass;
     private Field[] classFields;
@@ -33,7 +36,7 @@ public class AbstractDao<T, ID> implements GenericDao<T, ID> {
             statement.executeUpdate(query);
 //            ResultSet keys = statement.getGeneratedKeys();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Can't save entity to DB", e);
         }
         return entity;
     }
@@ -53,7 +56,7 @@ public class AbstractDao<T, ID> implements GenericDao<T, ID> {
                 return Optional.of(entity);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Can't get entity from DB", e);
         }
         return Optional.empty();
     }
@@ -65,7 +68,7 @@ public class AbstractDao<T, ID> implements GenericDao<T, ID> {
             Statement statement = connection.createStatement();
             statement.executeUpdate(query);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Can't update entity from DB", e);
         }
         return entity;
     }
@@ -80,7 +83,7 @@ public class AbstractDao<T, ID> implements GenericDao<T, ID> {
                 statement.executeUpdate(query);
                 return optionalEntity;
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error("Can't delete entity from DB", e);
             }
         }
         return Optional.empty();
@@ -102,7 +105,7 @@ public class AbstractDao<T, ID> implements GenericDao<T, ID> {
                 entityList.add(entity);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Can't get all entities from DB", e);
         }
         return Optional.of(entityList);
     }
@@ -155,7 +158,7 @@ public class AbstractDao<T, ID> implements GenericDao<T, ID> {
                             .append(", ");
                 }
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                logger.error("Can't get entity's value", e);
             }
         }
         changes = StringHelper.cutString(query);
